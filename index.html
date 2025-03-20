@@ -1,0 +1,68 @@
+<title>line test</title>
+
+<div id="head_area" class="box head_area"></div>
+
+<div id="elem0" class="start_box">
+    <div class="main_tool_name">暗号文/平文</div>
+    <textarea name="" id="" class="text_box"></textarea>
+</div>
+
+<div id="elem1" class="box strconv">
+    <div class="main_tool_name">モールス信号</div>
+    <select name="" id="">
+        <option value="a">日本語</option>
+        <option value="a">英語</option>
+    </select>
+    →モールス
+    <div id="elem1_val" class="box cipher_str">0110100101101000101001010010010110101</div>
+</div>
+
+<div id="elem2" class="box strconv">
+    <div class="main_tool_name">モールス信号</div>
+    <select name="" id="">
+        <option value="a">日本語</option>
+        <option value="a">英語</option>
+    </select>
+    →モールス
+    <div id="elem2_val" class="box cipher_str">こんにちは</div>
+</div>
+
+<div id="elem3" class="box strconv">
+    <div class="main_tool_name">モールス信号</div>
+    <select name="" id="">
+        <option value="a">日本語</option>
+        <option value="a">英語</option>
+    </select>
+    →モールス
+    <div id="elem3_val" class="cipher_str">4ca9bc5d</div>
+</div>
+
+<div id="elem4" class="box calc">
+    <div id="elem4_val" class="main_tool_name">進数変換</div>
+</div>
+
+<link rel="stylesheet" href="style.css">
+<script src="leader-line.min.js"></script>
+
+<script>
+    new LeaderLine(
+        document.getElementById("elem0"),
+        document.getElementById("elem1"),
+        {color: "#F0F0F0", size: 4}
+    );
+
+    let li = document.getElementsByClassName("box");
+    for(let i = 0; i < li.length; i++){
+        li[i].addEventListener("click", function(){
+            for(let j = 0; j < li.length; j++){
+                li[j].classList.remove("clicked");
+            }
+            this.classList.add("clicked");
+            if(this.classList.contains("clicked")){
+                document.getElementById("head_area").innerText = document.getElementById(this.id + "_val").innerText;
+            }else{
+                document.getElementById("head_area").innerText = "";
+            }
+        })
+    }
+</script>
