@@ -1,4 +1,8 @@
-@media(max: 600px){
+@media(max-width: 600px){
+    *{
+        font-family: "Noto", "メイリオ", "Meiryo", sans-serif;
+    }
+
     body{
         background-color: #101010;
         color: white;
