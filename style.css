@@ -72,7 +72,7 @@ body{
     font-size: large;
     top: 0;
     left: 0;
-    
+    z-index: 100;
     border-bottom: 10px solid #A0A0A0;
 }
 
@@ -99,4 +99,8 @@ input{
 select{
     background-color: #FFFFFF30;
     color: white;
+}
+
+.cipher_result{
+    font-size: medium;
 }
