@@ -100,6 +100,7 @@ input{
 select{
     background-color: #FFFFFF30;
     color: white;
+    width: 150px;
 }
 
 .cipher_result{
@@ -245,4 +246,20 @@ input[type="radio"]:checked + label {
 
 .top_text{
     font-size: large;
+}
+
+.type_change_btn{
+    width: 15px;
+    height: 15px;
+    top: 10px;
+    margin-top: 10px;
+    background-color: #FFFFFF30;
+    font-size: 10px;
+    display:  inline-block;
+    color: black;
+    overflow: hidden;
+}
+
+.type_change_btn:hover{
+    background-color: #FF000030;
 }

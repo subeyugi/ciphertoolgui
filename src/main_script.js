@@ -50,7 +50,6 @@ function makeBoxHtml(id){
             <option value='morse' class='type_code'>モールス</option>\
             <option value='tenji' class='type_code'>点字</option>\
             <option value='twotouch' class='type_code'>2タッチ</option>\
-            <option value='base64' class='type_code'>base64</option>\
             <option value='ceaser' class='type_strconv'>シーザー</option>\
             <option value='mikaka' class='type_strconv'>みかか</option>\
             <option value='strconv' class='type_strconv'>文字置換</option>\
@@ -64,6 +63,8 @@ function makeBoxHtml(id){
             <option value='baseconv' class='type_math'>進数変換</option>\
             <option value='calc' class='type_math'>計算</option>\
         </select>\
+        <div class='type_change_btn' onclick='preTypeBtnPressed(`" + id + "`)'><</div>\
+        <div class='type_change_btn' onclick='nxtTypeBtnPressed(`" + id + "`)'>></div>\
         <span id='sp1_" + id + "' class='box_sp'></span>\
         <div id='sp2_" + id + "' class='box_sp'></div>\
         <div id='txt_" + id + "' class='text_box' readonly='readonly'></div>\
@@ -229,24 +230,31 @@ function selectChanged(id){
             box.classList.add('strconv');
             break;
         case 'atbash':
+            sp2.innerHTML = "";
             box.classList.add('strconv');
             break;
         case 'visunel':
+            sp2.innerHTML = "";
             box.classList.add('strconv');
             break;
         case 'uesugi':
+            sp2.innerHTML = "";
             box.classList.add('strconv');
             break;
         case 'polybius':
+            sp2.innerHTML = "";
             box.classList.add('strconv');
             break;
         case 'reverse':
+            sp2.innerHTML = "";
             box.classList.add('posconv');
             break;
         case 'scytale':
+            sp2.innerHTML = "";
             box.classList.add('posconv');
             break;
         case 'railfance':
+            sp2.innerHTML = "";
             box.classList.add('posconv');
             break;
         case 'baseconv':
@@ -323,4 +331,22 @@ function planeCopyBtnClicked(){
     let s = document.getElementById('plane_text').value;
     console.log("ok", s);
     navigator.clipboard.writeText(s);
+}
+
+function preTypeBtnPressed(id){
+    //console.log("nxtTypeBtnClicked", id);
+    const select = document.getElementById('sel_' + id);
+    let n = select.length;
+    let index = (select.selectedIndex - 1 + n) % n;
+    select.selectedIndex = index;
+    //console.log(index);
+    selectChanged(id);
+}
+
+function nxtTypeBtnPressed(id){
+    const select = document.getElementById('sel_' + id);
+    let n = select.length;
+    let index = (select.selectedIndex + 1) % n;
+    select.selectedIndex = index;
+    selectChanged(id);
 }
