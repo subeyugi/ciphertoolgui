@@ -164,7 +164,7 @@ function selectChanged(id){
     box.classList.remove('code');
     box.classList.remove('strconv');
     box.classList.remove('posconv');
-    box.classList.remove('calc');
+    box.classList.remove('math');
 
     //console.log(type);
     switch(type){
