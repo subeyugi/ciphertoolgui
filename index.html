@@ -1,0 +1,31 @@
+<html lang='jananese'>
+    <body>
+        <div class='top_io_bar'>
+            <h8>暗号文</h8><span class='top_id' id='top_cipher_id'></span>
+            <button id="copyButton" onclick='cipherCopyBtnClicked()'>コピー</button><br>
+            <textarea id='cipher_text' class='top_text' resize='textareaResized()'></textarea>
+            <br>
+            <h8>平文　</h8><span class='top_id' id='top_plane_id'></span>
+            <button id="copyButton" onclick='planeCopyBtnClicked()'>コピー</button><br>
+            <textarea id='plane_text' class='top_text' readonly='readonly'></textarea>
+        </div>
+        <div id='main_area' class='main_area'></div>
+
+        <link rel='stylesheet' href='style.css'>
+        <link rel='stylesheet' href='style_smartphone.css'>
+        <script src='lib/leader-line.min.js'></script>
+        <script src="lib/encoding.min.js"></script>
+        <script src="lib/anim-event.min.js"></script>
+        <script src='src/converter.js'></script>
+        <script src='src/main_script.js'></script>
+        <script src="src/morseConverter.js"></script>
+        <script src="src/stringConverter.js"></script>
+        <script src="src/twoTouchConverter.js"></script>
+        <script src="src/caesarConverter.js"></script>
+        <script src="src/mikakaConverter.js"></script>
+        <script src="src/calcConverter.js"></script>
+        <script src="src/charcodeConverter.js"></script>
+        <script src="src/reverseConverter.js"></script>
+        <script src="src/baseConverter.js"></script>
+    </body>
+</html>
