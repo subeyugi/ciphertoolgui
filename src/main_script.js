@@ -63,8 +63,8 @@ function makeBoxHtml(id){
             <option value='baseconv' class='type_math'>進数変換</option>\
             <option value='calc' class='type_math'>計算</option>\
         </select>\
-        <div class='type_change_btn' onclick='preTypeBtnPressed(`" + id + "`)'><</div>\
-        <div class='type_change_btn' onclick='nxtTypeBtnPressed(`" + id + "`)'>></div>\
+        <div class='type_change_btn_L' onclick='preTypeBtnPressed(`" + id + "`)'><</div>\
+        <div class='type_change_btn_R' onclick='nxtTypeBtnPressed(`" + id + "`)'>></div>\
         <span id='sp1_" + id + "' class='box_sp'></span>\
         <div id='sp2_" + id + "' class='box_sp'></div>\
         <div id='txt_" + id + "' class='text_box' readonly='readonly'></div>\
