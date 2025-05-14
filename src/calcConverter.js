@@ -5,8 +5,6 @@
 // 5: +, -
 // 6: 数字のみ
 
-console.log(calculate("1+a", {a:1}));
-
 function getCalcLevel(s){
     let result = 6;
     let hasPlusMinus = false;
@@ -97,7 +95,7 @@ function calculate_sub(vec){//数値で返す
         }else if(symbol == '%'){
             result %= now;
         }
-        console.log("end  ", vec, result);
+        //console.log("end  ", vec, result);
         return result;
     }else if(level == 5){   //+-
         let result = 0;
@@ -117,7 +115,7 @@ function calculate_sub(vec){//数値で返す
             }
         }
         result += now * (symbol == '+' ? 1 : -1);
-        console.log("end  ", vec, result);
+        //console.log("end  ", vec, result);
         return result;
     }
     return vec[0];
@@ -146,6 +144,6 @@ function calculate(s, vals){
             result[i] = vals[result[i]];
         }
     }
-    console.log(result);
+    //console.log(result);
     return calculate_sub(result);
 }

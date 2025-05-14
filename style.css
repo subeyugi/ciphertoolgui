@@ -278,3 +278,8 @@ input[type="radio"]:checked + label {
 .type_change_btn_R:hover{
     background-color: #FF000030;
 }
+
+.simple_button{
+    background-color: #303030;
+    width: 140px;
+}

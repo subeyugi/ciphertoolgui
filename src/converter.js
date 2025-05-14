@@ -38,13 +38,14 @@ function updateText(from_id, to_id){
     //console.log("updatetext", document.getElementById('sel_' + to_id).value);
     let inText = document.getElementById('txt_' + from_id).innerText;
     outText = inText;
+    let code, type;
     switch(document.getElementById('sel_' + to_id).value){
         case 'none':
             outText = inText;
             break;
         case 'charcode':
-            let code = document.getElementById('code' + to_id).value;
-            let type = document.getElementById('type_' + to_id).value;
+            code = document.getElementById('code' + to_id).value;
+            type = document.getElementById('type_' + to_id).value;
             if(type == 'encode'){
                 outText = encodeStr(inText, code);
             }else if(type == 'decode'){
@@ -71,6 +72,29 @@ function updateText(from_id, to_id){
                 outText = encodeTwoTouch(inText);
             }
             break;
+        case 'alphacode':
+            type = document.getElementById('type_' + to_id).value;
+            switch(type){
+                case 'num2alpha':
+                    outText = num2alpha(inText);
+                    break;
+                case 'num2aiu':
+                    outText = num2aiu(inText);
+                    break;
+                case 'num2iroha':
+                    outText = num2iroha(inText);
+                    break;
+                case 'alpha2num':
+                    outText = alpha2num(inText);
+                    break;
+                case 'aiu2num':
+                    outText = aiu2num(inText);
+                    break;
+                case 'iroha2num':
+                    outText = iroha2num(inText);
+                    break;
+            }
+            break;
         case 'ceaser':
             console.log('rot_' + to_id, document.getElementById('rot_' + to_id));
             let rot = document.getElementById('rot_' + to_id).value;
@@ -78,9 +102,9 @@ function updateText(from_id, to_id){
             outText = decodeCaesar(inText, rot);
             break;
         case 'mikaka':
-            if(document.getElementById("decode_" + to_id).checked){
+            if(document.getElementById("type_" + to_id).innerText == 'ntt → みかか'){
                 outText = decodeMikaka(inText);
-            }else if(document.getElementById('encode_' + to_id).checked){
+            }else{
                 outText = encodeMikaka(inText);
             }
             break;

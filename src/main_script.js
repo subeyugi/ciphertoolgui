@@ -50,6 +50,7 @@ function makeBoxHtml(id){
             <option value='morse' class='type_code'>モールス</option>\
             <option value='tenji' class='type_code'>点字</option>\
             <option value='twotouch' class='type_code'>2タッチ</option>\
+            <option value='alphacode' class='type_code'>文字順</option>\
             <option value='ceaser' class='type_strconv'>シーザー</option>\
             <option value='mikaka' class='type_strconv'>みかか</option>\
             <option value='strconv' class='type_strconv'>文字置換</option>\
@@ -103,7 +104,7 @@ function plusButtonPressed(from_id){
 
     //ドラッグ
     document.getElementById('box_' + to_id).onpointermove = function(event){
-        if(event.buttons){
+        if(event.buttons && !event.shiftKey){
             this.style.left     = this.offsetLeft + event.movementX + 'px';
             this.style.top      = this.offsetTop + event.movementY + 'px';
             this.style.position = 'absolute';
@@ -187,6 +188,18 @@ function selectChanged(id){
                 </select>";
             box.classList.add('code');
             break;
+        case 'alphacode':
+            sp2.innerHTML = "\
+                <select id='type_" + id + "' onchange='updateAllText()'>\
+                    <option selected value='num2alpha'>0,1,2 → abc</option>\
+                    <option value='num2aiu'>0,1,2 → あいう</option>\
+                    <option value='num2iroha'>0,1,2 → いろは</option>\
+                    <option value='alpha2num'>abc → 0,1,2</option>\
+                    <option value='aiu2num'>あいう → 0,1,2</option>\
+                    <option value='iroha2num'>いろは → 0,1,2</option>\
+                </select>";
+            box.classList.add('code');
+            break;
         case 'morse':
             sp2.innerHTML = "\
                 <select id='morsetype_" + id + "' onchange='updateAllText()'>\
@@ -214,11 +227,7 @@ function selectChanged(id){
                 rot=<input class='num_input' type='number' id='rot_" + id + "' value='0' oninput='updateAllText()'>";
             break;
         case 'mikaka':
-            sp2.innerHTML = "\
-                <input id='decode_" + id  +  "' type='radio' name='" + id + "' value='1' onchange='updateAllText()' checked>\
-                <label class='label' for='decode_" + id  +  "'>英字→ひらがな</label>\
-                <input id='encode_" + id  +  "' type='radio' name='" + id + "' value='2' onchange='updateAllText()'>\
-                <label class='label' for='encode_" + id  +  "'>ひらがな→英字</label>";
+            sp2.innerHTML = "<div class='simple_button' id='type_" + id  +  "' onclick='mikakaClicked(`type_" + id + "`)'>ntt → みかか</div>";
             box.classList.add('strconv');
             break;
         case 'strconv':
@@ -300,13 +309,18 @@ function delBtnClicked(id){ //ボックスの削除
         idSet.delete(id);
         backwardArrowMap.delete(id);
 
+        //接続の更新
         document.getElementById('top_plane_id').innerText = "";
         if(v){
             for(let i = 0; i < v.length; i++){
                 console.log("v[i]", v[i]);
                 let v2 = forwardArrowMap.get(v[i]);
-                let v3 = v2.filter((e) => e != id);
-                backwardArrowMap.set(v[i], v3);
+                let v3 = [];
+                for(let j = 0; j < v2.length; j++) if(v2[j] != id){
+                    v3.push(v2[j]);
+                }
+                console.log("v3 = ", v3);
+                forwardArrowMap.set(v[i], v3);
             }
         }
     }
@@ -320,6 +334,7 @@ function delBtnClicked(id){ //ボックスの削除
             lines[i] = [undefined, undefined, undefined];
         }
     }
+    console.log(lines)
 }
 
 function cipherCopyBtnClicked(){
@@ -349,4 +364,12 @@ function nxtTypeBtnPressed(id){
     let index = (select.selectedIndex + 1) % n;
     select.selectedIndex = index;
     selectChanged(id);
+}
+
+function mikakaClicked(id){
+    if(document.getElementById(id).innerText == 'ntt → みかか'){
+        document.getElementById(id).innerText = 'みかか → ntt';
+    }else{
+        document.getElementById(id).innerText = 'ntt → みかか';
+    }
 }
