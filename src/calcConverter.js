@@ -122,7 +122,16 @@ function calculate_sub(vec){//数値で返す
 }
 
 function calculate(s, vals){
-    console.log(s, vals);
+    if(Array.isArray(vals)){
+        let result2 = [];
+        console.log("b", vals);
+        vals.forEach(e => {
+            console.log("a", e);
+            result2.push(calculate(s, e));
+        });
+        return result2;
+    }
+    console.log("calc2", s, vals);
     result = [];
     let now = "";
     for(let i = 0; i < s.length; i++){
@@ -139,11 +148,13 @@ function calculate(s, vals){
     if(now != ""){
         result.push(parseInt(now));
     }
+    console.log(result);
     for(let i = 0; i < result.length; i++){
+        console.log(vals)
         if(result[i] in vals){
+            console.log("ok")
             result[i] = vals[result[i]];
         }
     }
-    //console.log(result);
     return calculate_sub(result);
 }

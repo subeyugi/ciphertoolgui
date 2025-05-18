@@ -2,24 +2,38 @@ hiragana2mikakaMap = new Map(Object.entries({'あ':'3', 'い':'e', 'う':'4', '�
 mikaka2hiraganaMap = new Map(Object.entries({'3':'あ', 'e':'い', '4':'う', '5':'え', '6':'お', 't':'か', 'g':'き', 'h':'く', ':':'け', 'b':'こ', 'x':'さ', 'd':'し', 'r':'す', 'p':'せ', 'c':'そ', 'q':'た', 'a':'ち', 'z':'つ', 'w':'て', 's':'と', 'u':'な', 'i':'に', '1':'ぬ', ',':'ね', 'k':'の', 'f':'は', 'v':'ひ', '2':'ふ', '^':'へ', '-':'ほ', 'j':'ま', 'n':'み', ']':'む', '/':'め', 'm':'も', '7':'や', '8':'ゆ', '9':'よ', 'o':'ら', 'l':'り', '.':'る', ';':'れ', '\\':'ろ', '0':'わ', 'y':'ん'}));
 
 function encodeMikaka(s){
+    if(Array.isArray(s)){
+        let result2 = [];
+        s.forEach(e => {
+            result2.push(encodeMikaka(e));
+        });
+        return result2;
+    }
     let result = "";
     for(let i = 0; i < s.length; i++){
         if(hiragana2mikakaMap.has(s[i])){
             result += hiragana2mikakaMap.get(s[i]);
         }else{
-            result += s[i];
+            result += getErrorStr(s[i]);
         }
     }
     return result;
 }
 
 function decodeMikaka(s){
+    if(Array.isArray(s)){
+        let result2 = [];
+        s.forEach(e => {
+            result2.push(decodeMikaka(e));
+        });
+        return result2;
+    }
     let result = "";
     for(let i = 0; i < s.length; i++){
         if(mikaka2hiraganaMap.has(s[i])){
             result += mikaka2hiraganaMap.get(s[i]);
         }else{
-            result += s[i];
+            result += getErrorStr(s[i]);
         }
     }
     return result;

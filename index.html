@@ -1,15 +1,18 @@
 <html lang='jananese'>
     <body>
         <div class='top_io_bar'>
+            暗号復号ツール　
+            <button type="button" onclick='saveBtnClicked()'>保存</button>
+            <input type="file" name="" id="">
             注意：未実装、バグあり
             <a href="https://github.com/subeyugi/ciphertoolgui/blob/main/readme.md" target="_blank">使い方はこちら</a><br>
-            <h8>暗号文</h8><span class='top_id' id='top_cipher_id'></span>
-            <button id="copyButton" onclick='cipherCopyBtnClicked()'>コピー</button><br>
-            <textarea id='cipher_text' class='top_text' resize='textareaResized()'></textarea>
+            <h8>入力文</h8><span class='top_id' id='top_input_id'></span>
+            <button id="copyButton" onclick='inputCopyBtnClicked()'>コピー</button><br>
+            <textarea id='input_text' class='top_text' spellcheck='false' resize='textareaResized()'></textarea>
             <br>
-            <h8>平文　</h8><span class='top_id' id='top_plane_id'></span>
-            <button id="copyButton" onclick='planeCopyBtnClicked()'>コピー</button><br>
-            <textarea id='plane_text' class='top_text' readonly='readonly'></textarea>
+            <h8>出力文</h8><span class='top_id' id='top_output_id'></span>
+            <button id="copyButton" onclick='outputCopyBtnClicked()'>コピー</button><br>
+            <textarea id='output_text' class='top_text' spellcheck='false' readonly='readonly'></textarea>
         </div>
         <div id='main_area' class='main_area'></div>
 
@@ -18,6 +21,7 @@
         <script src="lib/encoding.min.js"></script>
         <script src="lib/anim-event.min.js"></script>
         <script src='src/converter.js'></script>
+        <script src='src/main.js'></script>
         <script src='src/main_script.js'></script>
         <script src="src/morseConverter.js"></script>
         <script src="src/stringConverter.js"></script>
@@ -29,5 +33,8 @@
         <script src="src/reverseConverter.js"></script>
         <script src="src/baseConverter.js"></script>
         <script src="src/charNumberConverter.js"></script>
+        <script src="src/errorIndication.js"></script>
+        <script src="src/atbashConverter.js"></script>
+        <script src="src/vigenereConverter.js"></script>
     </body>
 </html>

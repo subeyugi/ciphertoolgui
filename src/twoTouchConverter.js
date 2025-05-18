@@ -8,22 +8,45 @@ for(let i = 0; i < 10; i++){
 }
 
 function encodeTwoTouch(s){
+    if(Array.isArray(s)){
+        let result2 = [];
+        s.forEach(e => {
+            result2.push(encodeTwoTouch(e));
+        });
+        return result2;
+    }
     let result = "";
     for(let i = 0; i < s.length; i++){
-        result += hiragana2twoTouch.get(s[i]);
+        let tmp  = hiragana2twoTouch.get(s[i]);
+        if(tmp != undefined){
+            result += tmp;
+        }else{
+            result += getErrorStr(s[i]);
+        }
     }
     return result;
 }
 
 function decodeTwoTouch(s){
-    console.log(s);
-    try {
-        let result = "";
-        for(let i = 0; i < s.length-1; i += 2){
-            result += twoTouch2hiragana[parseInt(s[i])][parseInt(s[i + 1])];
-        }
-        return result;
-    } catch (error) {
-        return undefined;
+    if(Array.isArray(s)){
+        let result2 = [];
+        s.forEach(e => {
+            result2.push(decodeTwoTouch(e));
+        });
+        return result2;
     }
+    let result = "";
+    for(let i = 0; i < s.length-1; i += 2){
+        let x = parseInt(s[i]);
+        let y = parseInt(s[i + 1]);
+        if(0 <= x && x < 10 && 0 <= y && y < 10){
+            result += twoTouch2hiragana[x][y];
+        }else{
+            result += getErrorStr(s[i] + s[i + 1]);
+        }
+    }
+    if(s.length % 2 == 1){
+        result += getErrorStr(s[s.length - 1]);
+    }
+    return result;
 }

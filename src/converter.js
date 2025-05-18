@@ -1,130 +1,169 @@
 function updateAllText(){
-    console.log("forward:", forwardArrowMap);
-    console.log("backward:", backwardArrowMap);
+    //あらかじめトポロジカルソートしておく
+
     let seen = new Set([]);
-    let que = []; //取り出す操作に現状O(N)
-    idSet.forEach(function(e){
-        if(document.getElementById('sel_' + e).value == 'input'){
-            seen.add(e);
-            que.push(e);
+    let cntFromIds = new Map();
+    let que = [];
+    let queIdx = 0;
+    let sortedIds = [];
+    idSet.forEach(function(id){
+        cntFromIds.set(id, cipherObjects.get(id).fromIds.size);
+    });
+
+    idSet.forEach(function(id){
+        if(cntFromIds.get(id) == 0){
+            if(cipherObjects.get(id).type == CipherType.input){
+                seen.add(id);
+                que.push(id);
+            }else{
+                seen.add(id);
+                cipherObjects.get(id).text = '';
+            }
         }
     });
 
-    while(que.length > 0){
-        let now = que.shift();
-        if(!forwardArrowMap.has(now)) continue;
-        let nxts = forwardArrowMap.get(now);
-        for(let i = 0; i < nxts.length; i++){
-            let nxt = nxts[i];
-            if(seen.has(nxt)) continue;
-            seen.add(nxt);
-            updateText(now, nxt);
-            que.push(nxt);
+    while(que.length - queIdx > 0){
+        let nowId = que[queIdx++];
+        if(cipherObjects.get(nowId).type != CipherType.input){
+            sortedIds.push(nowId);
         }
+        let nxts = cipherObjects.get(nowId).toIds;
+        nxts.forEach(nxtId => {
+            if(!seen.has(nxtId)){
+                seen.add(nxtId);
+                que.push(nxtId);
+            }
+        });
     }
-
-    //トップ平文を更新
-    let id = document.getElementById('top_plane_id').innerText;
-    if(id){
-        //console.log(id);
-        document.getElementById('plane_text').value = document.getElementById('txt_' + id).innerText;
+    //console.log("updateAllText: ", sortedIds);
+    sortedIds.forEach(function(id){
+        updateText(id);
+    });
+    if(outputId){
+        document.getElementById('output_text').innerText = cipherObjects.get(outputId).text;
     }
 }
 
-function updateText(from_id, to_id){
-    if(!idSet.has(from_id)) return;
+
+function updateText(to_id){
     if(!idSet.has(to_id)) return;
-    console.log("updateText:", from_id, to_id);
-    //console.log("updatetext", document.getElementById('sel_' + to_id).value);
-    let inText = document.getElementById('txt_' + from_id).innerText;
-    outText = inText;
-    let code, type;
-    switch(document.getElementById('sel_' + to_id).value){
-        case 'none':
-            outText = inText;
-            break;
-        case 'charcode':
-            code = document.getElementById('code' + to_id).value;
-            type = document.getElementById('type_' + to_id).value;
-            if(type == 'encode'){
-                outText = encodeStr(inText, code);
-            }else if(type == 'decode'){
-                outText = decodeStr(inText, code);
+    let toObj = cipherObjects.get(to_id);
+    let options = toObj.options;
+    let fromText = '';
+    if(toObj.fromIds.size == 1){
+        fromTextSplit = cipherObjects.get(toObj.fromIds.values().next().value).text.split(',');
+        fromText = cipherObjects.get(toObj.fromIds.values().next().value).text;
+    }
+    console.log("updateText:", to_id, fromText);
+
+    switch(toObj.type){
+        case CipherType.charcode:
+            switch(options.mode){
+                case 'decode':
+                    toObj.text = decodeStr(fromTextSplit, options.code).join(',');
+                    break;
+                case 'encode':
+                    toObj.text = encodeStr(fromTextSplit, options.code).join(',');
+                    break;
             }
             break;
-        case 'morse':
-            outText = undefined;
-            let morsetype = document.getElementById('morsetype_' + to_id).value;
-            if(morsetype == 'morse2jp'){
-                outText = decodeMorseJP(inText);
-            }else if(morsetype == 'morse2en'){
-                outText = decodeMorseEN(inText);
-            }else if(morsetype == 'jp2morse'){
-                outText = encodeMorseJP(inText);
-            }else if(morsetype == 'en2morse'){
-                outText = encodeMorseEN(inText);
+        case CipherType.morse:
+            switch(options.mode){
+                case 'morse2jp':
+                    toObj.text = decodeMorseJP(fromTextSplit).join(',');
+                    break;
+                case 'morse2en':
+                    toObj.text = decodeMorseEN(fromTextSplit).join(',');
+                    break;
+                case 'jp2morse':
+                    toObj.text = encodeMorseJP(fromTextSplit).join(',');
+                    break;
+                case 'en2morse':
+                    toObj.text = encodeMorseEN(fromTextSplit).join(',');
+                    break;
             }
             break;
-        case 'twotouch':
-            if(document.getElementById("decode_" + to_id).checked){
-                outText = decodeTwoTouch(inText);
-            }else if(document.getElementById('encode_' + to_id).checked){
-                outText = encodeTwoTouch(inText);
+        case CipherType.twotouch:
+            switch(options.mode){
+                case 'num2char':
+                    toObj.text = decodeTwoTouch(fromTextSplit);
+                    break;
+                case 'char2num':
+                    toObj.text = encodeTwoTouch(fromTextSplit);
+                    break;
             }
             break;
-        case 'alphacode':
-            type = document.getElementById('type_' + to_id).value;
-            switch(type){
+        case CipherType.charIndex:
+            switch(options.mode){
                 case 'num2alpha':
-                    outText = num2alpha(inText);
+                    toObj.text = num2alpha(fromText);
                     break;
                 case 'num2aiu':
-                    outText = num2aiu(inText);
+                    toObj.text = num2aiu(fromText);
                     break;
                 case 'num2iroha':
-                    outText = num2iroha(inText);
+                    toObj.text = num2iroha(fromText);
                     break;
                 case 'alpha2num':
-                    outText = alpha2num(inText);
+                    toObj.text = alpha2num(fromText);
                     break;
                 case 'aiu2num':
-                    outText = aiu2num(inText);
+                    toObj.text = aiu2num(fromText);
                     break;
                 case 'iroha2num':
-                    outText = iroha2num(inText);
+                    toObj.text = iroha2num(fromText);
                     break;
             }
             break;
-        case 'ceaser':
-            console.log('rot_' + to_id, document.getElementById('rot_' + to_id));
-            let rot = document.getElementById('rot_' + to_id).value;
-            console.log(rot);
-            outText = decodeCaesar(inText, rot);
+        case CipherType.ceaser:
+            toObj.text = decodeCaesar(fromTextSplit, parseInt(options.rot)).join(',');
             break;
-        case 'mikaka':
-            if(document.getElementById("type_" + to_id).innerText == 'ntt → みかか'){
-                outText = decodeMikaka(inText);
-            }else{
-                outText = encodeMikaka(inText);
+        case CipherType.mikaka:
+            switch(options.mode){
+                case 'en2jp':
+                    toObj.text = decodeMikaka(fromTextSplit);
+                    break;
+                case 'jp2en':
+                    toObj.text = encodeMikaka(fromTextSplit);
+                    break;
             }
             break;
-        case 'strconv':
-            outText = convertString(inText, document.getElementById('cvf_' + to_id).value, document.getElementById('cvt_' + to_id).value);
+        case CipherType.strconv:
+            if(options.from == ''){
+                toObj.text = fromTextSplit.join(',');
+            }else{
+                toObj.text = convertString(fromTextSplit, options.from.split(','), options.to.split(',')).join(',');
+            }
             break;
-        case 'reverse':
-            outText = reverseStr(inText);
+        case CipherType.atbash:
+            toObj.text = convertAtbash(fromTextSplit).join(',');
             break;
-        case 'baseconv':
-            fromBase = parseInt(document.getElementById('from_' + to_id).value);
-            toBase = parseInt(document.getElementById('to_' + to_id).value);
-            console.log(fromBase, toBase);
-            outText = convertBase(inText, fromBase, toBase);
+        case CipherType.vigenere:
+            switch(options.mode){
+                case 'decode':
+                    toObj.text = decodeVigenere(fromTextSplit, options.key).join(',');
+                    break;
+                case 'encode':
+                    toObj.text = encodeVigenere(fromTextSplit, options.key).join(',');
+                    break;
+            }
             break;
-        case 'calc':
-            outText = calculate(document.getElementById('exp_' + to_id).value, {a:parseInt(inText)});
+        case CipherType.reverse:
+            toObj.text = reverseStr(fromTextSplit).join(',');
+            break;
+        case CipherType.baseconv:
+            toObj.text = convertBase(fromTextSplit, parseInt(options.from), parseInt(options.to)).join(',');
+            break;
+        case CipherType.calc:
+            let obj = [];
+            for(let i = 0; i < fromTextSplit.length; i++){
+                obj.push({a: fromTextSplit[i]});
+            }
+            toObj.text = calculate(options.exp , obj);
             break;
         default:
+            toObj.text = fromTextSplit;
             break;
     }
-    document.getElementById('txt_' + to_id).innerText = outText;
+    document.getElementById('txt_' + to_id).innerText = toObj.text;
 }

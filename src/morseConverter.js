@@ -98,6 +98,13 @@ morseDataEN.split('\n').forEach(e=>{
 });
 
 function encodeMorseJP(s){
+    if(Array.isArray(s)){
+        let result2 = [];
+        s.forEach(e => {
+            result2.push(encodeMorseJP(e));
+        });
+        return result2;
+    }
     let result = "";
     for(let i = 0; i < s.length; i++){
         if(i != 0) result += "　";
@@ -105,13 +112,20 @@ function encodeMorseJP(s){
         if(c != undefined){
             result += c;
         }else{
-            result += s[i];
+            result += getErrorStr(s[i]);
         }
     }
     return result;
 }
 
 function decodeMorseJP(s){
+    if(Array.isArray(s)){
+        let result2 = [];
+        s.forEach(e => {
+            result2.push(decodeMorseJP(e));
+        });
+        return result2;
+    }
     let result = "";
     let s2 = "";
     for(let i = 0; i < s.length; ++i){
@@ -131,7 +145,7 @@ function decodeMorseJP(s){
         if(c != undefined){
             result += c;
         }else{
-            result += v[i];
+            result += getErrorStr(v[i]);
         }
     }
     return result;
@@ -139,20 +153,33 @@ function decodeMorseJP(s){
 
 
 function encodeMorseEN(s){
+    if(Array.isArray(s)){
+        let result2 = [];
+        s.forEach(e => {
+            result2.push(encodeMorseEN(e));
+        });
+        return result2;
+    }
     let result = "";
     for(let i = 0; i < s.length; i++){
         if(i != 0) result += "　";
-        let c = alphabet2morseMap.get(s[i]);
-        if(c != undefined){
-            result += c;
+        if(alphabet2morseMap.has(s[i])){
+            result += alphabet2morseMap.get(s[i]);
         }else{
-            result += s[i];
+            result += getErrorStr(s[i]);
         }
     }
     return result;
 }
 
 function decodeMorseEN(s){
+    if(Array.isArray(s)){
+        let result2 = [];
+        s.forEach(e => {
+            result2.push(decodeMorseEN(e));
+        });
+        return result2;
+    }
     let result = "";
     let s2 = "";
     for(let i = 0; i < s.length; ++i){
@@ -168,11 +195,10 @@ function decodeMorseEN(s){
     }
     let v = s2.split("　");
     for(let i = 0; i < v.length; i++){
-        let c = morse2alphabetMap.get(v[i]);
-        if(c != undefined){
-            result += c;
+        if(morse2alphabetMap.has(v[i])){
+            result += morse2alphabetMap.get(v[i]);
         }else{
-            result += v[i];
+            result += getErrorStr(v[i]);
         }
     }
     return result;

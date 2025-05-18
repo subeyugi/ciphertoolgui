@@ -10,6 +10,10 @@ body{
     padding-top: 250px;
 }
 
+input[type='file']{
+    background-color: transparent;
+}
+
 /* 箱の色の定義 */
 .box{
     color: #FFFFFF;
@@ -97,6 +101,10 @@ input{
     user-select: none;
 }
 
+input[type='text']{
+    width: 100%;
+}
+
 select{
     background-color: #FFFFFF30;
     color: white;
@@ -176,6 +184,7 @@ select{
 textarea{
     user-select: none;
     background-color: #000000;
+    font-family: Consolas, monospace;
     width: calc(100% - 40px);
     resize: vertical;
     color: white;
@@ -275,11 +284,12 @@ input[type="radio"]:checked + label {
 .type_change_btn_L:hover{
     background-color: #FF000030;
 }
+
 .type_change_btn_R:hover{
     background-color: #FF000030;
 }
 
-.simple_button{
+.select_element{
     background-color: #303030;
     width: 140px;
 }
