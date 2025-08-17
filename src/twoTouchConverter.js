@@ -7,46 +7,67 @@ for(let i = 0; i < 10; i++){
     }
 }
 
-function encodeTwoTouch(s){
-    if(Array.isArray(s)){
-        let result2 = [];
-        s.forEach(e => {
-            result2.push(encodeTwoTouch(e));
-        });
-        return result2;
-    }
-    let result = "";
-    for(let i = 0; i < s.length; i++){
-        let tmp  = hiragana2twoTouch.get(s[i]);
-        if(tmp != undefined){
-            result += tmp;
-        }else{
-            result += getErrorStr(s[i]);
+function encodeTwoTouch(s, isVec=false){
+    let result = '';
+    let message = '';
+    if(isVec){
+        for(let i = 0; i < s.length; ++i){
+            for(let j = 0; j < s[i].length; ++j){
+                for(let k = 0; k < s[i][j].length; ++k){
+                    let tmp = encodeTwoTouch(s[i][j][k]);
+                    s[i][j][k] = tmp.result;
+                    if(message == '') message = tmp.message;
+                }   
+            }
         }
+        return new ConverterResult(s, message);
+    }else{
+        s = splitDakuten(s);
+        for(let i = 0; i < s.length; i++){
+            let tmp  = hiragana2twoTouch.get(s[i]);
+            if(tmp != undefined){
+                result += tmp;
+            }else{
+                result += getErrorStr(s[i]);
+                if(message == '') message = `"${s[i]}"を変換できません`;
+            }
+        }
+        return new ConverterResult(result, message);
     }
-    return result;
 }
 
-function decodeTwoTouch(s){
-    if(Array.isArray(s)){
-        let result2 = [];
-        s.forEach(e => {
-            result2.push(decodeTwoTouch(e));
-        });
-        return result2;
-    }
-    let result = "";
-    for(let i = 0; i < s.length-1; i += 2){
-        let x = parseInt(s[i]);
-        let y = parseInt(s[i + 1]);
-        if(0 <= x && x < 10 && 0 <= y && y < 10){
-            result += twoTouch2hiragana[x][y];
-        }else{
-            result += getErrorStr(s[i] + s[i + 1]);
+function decodeTwoTouch(s, isVec=false){
+    let result = '';
+    let message = '';
+    if(isVec){
+        for(let i = 0; i < s.length; ++i){
+            for(let j = 0; j < s[i].length; ++j){
+                for(let k = 0; k < s[i][j].length; ++k){
+                    let tmp = decodeTwoTouch(s[i][j][k]);
+                    s[i][j][k] = tmp.result;
+                    if(message == '') message = tmp.message;
+                }   
+            }
         }
+        return new ConverterResult(s, message);
+    }else{
+        if(s.length % 2 != 0){
+            if(message == '') message = `入力桁数は2の倍数の必要があります`;
+        }
+        for(let i = 0; i < s.length-1; i += 2){
+            let x = parseInt(s[i]);
+            let y = parseInt(s[i + 1]);
+            if(0 <= x && x < 10 && 0 <= y && y < 10){
+                result += twoTouch2hiragana[x][y];
+            }else{
+                result += getErrorStr(s[i] + s[i + 1]);
+                if(message == '') message = `"${s[i]}"を変換できません`;
+            }
+        }
+        if(s.length % 2 == 1){
+            result += getErrorStr(s[s.length - 1]);
+        }
+        result = joinDakuten(result);
+        return new ConverterResult(result, message);
     }
-    if(s.length % 2 == 1){
-        result += getErrorStr(s[s.length - 1]);
-    }
-    return result;
 }

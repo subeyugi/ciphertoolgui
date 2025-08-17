@@ -10,142 +10,146 @@ for(let i = 0; i < aiu.length; i++){
 for(let i = 0; i < iroha.length; i++){
     iroha2numMp.set(iroha[i], i);
 }
-console.log("num2alpha", num2alpha([0, 1, 2, 3, 4], true));
 
-function num2alpha(s, isList = false){
-    if(!isList && Array.isArray(s)){
-        let result2 = [];
-        s.forEach(e => {
-            result2.push(num2alpha(e));
-        });
-        return result2;
-    }
 
-    let input = [], result = '';
-    if(isList){
-        input = s;
-    }else{
-        input = s.split(',');
-    }
-    if(s == '') return '';
-    for(let i = 0; i < input.length; i++){
-        if(0 <= input[i] && input[i] < 26){
-            result += String.fromCharCode('a'.charCodeAt(0) + parseInt(input[i]));
-        }else{
-            result += getErrorStr(input[i].toString());
-        }
-    }
-    return result;
-}
-
-function num2aiu(s){
-    if(Array.isArray(s)){
-        let result2 = [];
-        s.forEach(e => {
-            result2.push(num2aiu(e));
-        });
-        return result2;
-    }
-    if(s == '') return '';
-    let input = s.split(','), result = '';
-    for(let i = 0; i < input.length; i++){
-        if(0 <= input[i] && input[i] < aiu.length){
-            result += aiu[parseInt(input[i])];
-        }else{
-            result += getErrorStr(input[i].toString());
-        }
-    }
-    return result;
-}
-
-function num2iroha(s){
-    if(Array.isArray(s)){
-        let result2 = [];
-        s.forEach(e => {
-            result2.push(num2iroha(e));
-        });
-        return result2;
-    }
-    if(s == '') return '';
-    let input = s.split(','), result = '';
-    for(let i = 0; i < input.length; i++){
-        if(0 <= input[i] && input < iroha.length){
-            result += iroha[parseInt(input[i])];
-        }else{
-            result += getErrorStr(input[i].toString());
-        }
-    }
-    return result;
-}
-
-function alpha2num(s, isList = false){
-    if(Array.isArray(s)){
-        let result2 = [];
-        s.forEach(e => {
-            result2.push(alpha2num(e));
-        });
-        return result2;
-    }
-    if(isList){
-        console.log("ok", s);
-        let result = [];
-        for(let i = 0; i < s.length; i++){
-            if('a'.charCodeAt(0) <= s.charCodeAt(i) && s.charCodeAt(i) <= 'z'.charCodeAt(0)){
-                result.push(s.charCodeAt(i) - 'a'.charCodeAt(0));
-            }else{
-                result.push(getErrorStr(s[i]));
+function num2alpha(vec, isVec=false){
+    let result = '';
+    let message = '';
+    if(isVec){
+        for(let i = 0; i < vec.length; ++i){
+            for(let j = 0; j < vec[i].length; ++j){
+                let tmp = num2alpha(vec[i][j]);
+                vec[i][j] = tmp.result;
+                if(message == '') message = tmp.message;
             }
         }
-        return result;
+        return new ConverterResult(vec, message);
     }else{
-        let result = '';
-        for(let i = 0; i < s.length; i++){
-            if(i != 0) result += ',';
-            if('a'.charCodeAt(0) <= s.charCodeAt(i) && s.charCodeAt(i) <= 'z'.charCodeAt(0)){
-                result += (s.charCodeAt(i) - 'a'.charCodeAt(0)).toString();
+        if(vec == '') return '';
+        for(let i = 0; i < vec.length; i++){
+            if(0 <= vec[i] && vec[i] < 26){
+                result += String.fromCharCode('a'.charCodeAt(0) + parseInt(vec[i]));
             }else{
-                result += getErrorStr(s[i]);
+                result += getErrorStr(vec[i].toString());
+                if(message == '') message = `"${vec[i]}"は変換できません`;
             }
         }
-        return result;
+        return new ConverterResult(result, message);
     }
 }
 
-function aiu2num(s){
-    if(Array.isArray(s)){
+function num2aiu(vec, isVec=false){
+    if(vec == '') return '';
+    let result = '';
+    let message = '';
+    if(isVec){
+        for(let i = 0; i < vec.length; ++i){
+            for(let j = 0; j < vec[i].length; ++j){
+                let tmp = num2aiu(vec[i][j]);
+                vec[i][j] = tmp.result;
+                if(message == '') message = tmp.message;
+            }
+        }
+        return new ConverterResult(vec, message);
+    }else{
+        for(let i = 0; i < vec.length; i++){
+            if(0 <= vec[i] && vec[i] < aiu.length){
+                result += aiu[parseInt(vec[i])];
+            }else{
+                result += getErrorStr(vec[i].toString());
+                if(message == '') message = `"${vec[i]}"は変換できません`;
+            }
+        }
+        return new ConverterResult(result, message);
+    }
+}
+
+function num2iroha(vec, isVec=false){
+    if(vec == '') return '';
+    let result = '';
+    let message = '';
+    if(isVec){
+        for(let i = 0; i < vec.length; ++i){
+            for(let j = 0; j < vec[i].length; ++j){
+                let tmp = num2iroha(vec[i][j]);
+                vec[i][j] = tmp.result;
+                if(message == '') message = tmp.message;
+            }
+        }
+        return new ConverterResult(vec, message);
+    }else{
+        for(let i = 0; i < vec.length; i++){
+            if(0 <= vec[i] && vec[i] < iroha.length){
+                result += iroha[parseInt(vec[i])];
+            }else{
+                result += getErrorStr(vec[i].toString());
+                if(message == '') message = `"${vec[i]}"は変換できません`;
+            }
+        }
+        return new ConverterResult(result, message);
+    }
+}
+
+function alpha2num(vec, isVec = false){
+    let result = [];
+    let message = '';
+    if(isVec){
+        for(let i = 0; i < vec.length; ++i){
+            for(let j = 0; j < vec[i].length; ++j){
+                let tmp = num2iroha(vec[i][j][0]);
+                vec[i][j] = tmp.result;
+                if(message == '') message = tmp.result;
+            }
+        }
+        return new ConverterResult(result, message);
+    }else{
+        for(let i = 0; i < vec.length; i++){
+            if('a'.charCodeAt(0) <= vec.charCodeAt(i) && vec.charCodeAt(i) <= 'z'.charCodeAt(0)){
+                result.push((vec.charCodeAt(i) - 'a'.charCodeAt(0)).toString());
+            }else{
+                result.push(getErrorStr(vec[i]));
+                if(message == '') message = `"${vec[i]}"は変換できません`;
+            }
+        }
+        return new ConverterResult(result, message);
+    }
+}
+
+function aiu2num(vec){
+    if(Array.isArray(vec)){
         let result2 = [];
-        s.forEach(e => {
+        vec.forEach(e => {
             result2.push(aiu2num(e));
         });
         return result2;
     }
     let result = '';
-    for(let i = 0; i < s.length; i++){
+    for(let i = 0; i < vec.length; i++){
         if(i != 0) result += ',';
-        if(aiu2numMp.has(s[i])){
-            result += aiu2numMp.get(s[i]);
+        if(aiu2numMp.has(vec[i])){
+            result += aiu2numMp.get(vec[i]);
         }else{
-            result += getErrorStr(s[i]);
+            result += getErrorStr(vec[i]);
         }
     }
     return result;
 }
 
-function iroha2num(s){
-    if(Array.isArray(s)){
+function iroha2num(vec){
+    if(Array.isArray(vec)){
         let result2 = [];
-        s.forEach(e => {
+        vec.forEach(e => {
             result2.push(iroha2num(e));
         });
         return result2;
     }
     let result = '';
-    for(let i = 0; i < s.length; i++){
+    for(let i = 0; i < vec.length; i++){
         if(i != 0) result += ',';
-        if(iroha2numMp.has(s[i])){
-            result += iroha2numMp.get(s[i]);
+        if(iroha2numMp.has(vec[i])){
+            result += iroha2numMp.get(vec[i]);
         }else{
-            result += getErrorStr(s[i]);
+            result += getErrorStr(vec[i]);
         }
     }
     return result;

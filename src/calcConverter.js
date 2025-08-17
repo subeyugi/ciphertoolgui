@@ -1,3 +1,16 @@
+/*
+制約
+* 10進数で入力されている
+* 変数名は1文字
+* 変数に値が代入されている
+* 数式として成り立っている
+
+計算方法
+* 文字列数式を配列に変換する
+    - 数字は１つの要素にまとめる
+    ― それ以外の変数、記号は1文字ごとに別要素に入れる
+*/
+
 // 1: (), floor(), ceil()
 // 2: ^
 // 3: *, /, %
@@ -95,7 +108,7 @@ function calculate_sub(vec){//数値で返す
         }else if(symbol == '%'){
             result %= now;
         }
-        //console.log("end  ", vec, result);
+        console.log("end  ", vec, result);
         return result;
     }else if(level == 5){   //+-
         let result = 0;
@@ -115,46 +128,55 @@ function calculate_sub(vec){//数値で返す
             }
         }
         result += now * (symbol == '+' ? 1 : -1);
-        //console.log("end  ", vec, result);
+        console.log("end  ", vec, result);
         return result;
     }
+    
+    console.log("end  ", vec[0]);
     return vec[0];
 }
 
-function calculate(s, vals){
-    if(Array.isArray(vals)){
-        let result2 = [];
-        console.log("b", vals);
-        vals.forEach(e => {
-            console.log("a", e);
-            result2.push(calculate(s, e));
-        });
-        return result2;
-    }
-    console.log("calc2", s, vals);
-    result = [];
-    let now = "";
-    for(let i = 0; i < s.length; i++){
-        if(s[i] >= '0' && s[i] <= '9'){
-            now += s[i];
-        }else{
-            if(now != ""){
-                result.push(parseInt(now));
+function calculate(s, vals, isVec=false){
+    console.log("calculate", s, vals);
+    let result = [];
+    let message = '';
+    if(isVec){
+        for(let i = 0; i < s.length; ++i){
+            for(let j = 0; j < s[i].length; ++j){
+                for(let k = 0; k < s[i][j].length; ++k){
+                    let tmp = calculate(s[i][j][k], vals);
+                    s[i][j][k] = tmp.result;
+                    if(message == '') message = tmp.message;
+                }   
             }
-            now = "";
-            result.push(s[i]);
         }
-    }
-    if(now != ""){
-        result.push(parseInt(now));
-    }
-    console.log(result);
-    for(let i = 0; i < result.length; i++){
-        console.log(vals)
-        if(result[i] in vals){
-            console.log("ok")
-            result[i] = vals[result[i]];
+        return new ConverterResult(s, message);
+    }else{
+        console.log("calc2", s, vals);
+        let now = '';   //数字をためておく
+        for(let i = 0; i < s.length; i++){
+            if(s[i] >= '0' && s[i] <= '9'){
+                now += s[i];
+            }else{
+                if(now != ''){
+                    result.push(parseInt(now));
+                }
+                now = '';
+                result.push(s[i]);
+            }
         }
+        if(now != ''){
+            result.push(parseInt(now));
+        }
+        console.log(result);
+        for(let i = 0; i < result.length; i++){
+            console.log(vals)
+            if(result[i] in vals){
+                result[i] = vals[result[i]];
+            }
+        }
+        ans = calculate_sub(result);
+        console.log(ans);
+        return new ConverterResult(ans, message);
     }
-    return calculate_sub(result);
 }

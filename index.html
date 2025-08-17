@@ -3,25 +3,35 @@
         <div class='top_io_bar'>
             暗号復号ツール　
             <button type="button" onclick='saveBtnClicked()'>保存</button>
-            <input type="file" name="" id="">
+            <input type="file" name="" id="file_input" accept=".cip" />
             注意：未実装、バグあり
-            <a href="https://github.com/subeyugi/ciphertoolgui/blob/main/readme.md" target="_blank">使い方はこちら</a><br>
-            <h8>入力文</h8><span class='top_id' id='top_input_id'></span>
-            <button id="copyButton" onclick='inputCopyBtnClicked()'>コピー</button><br>
-            <textarea id='input_text' class='top_text' spellcheck='false' resize='textareaResized()'></textarea>
-            <br>
-            <h8>出力文</h8><span class='top_id' id='top_output_id'></span>
-            <button id="copyButton" onclick='outputCopyBtnClicked()'>コピー</button><br>
-            <textarea id='output_text' class='top_text' spellcheck='false' readonly='readonly'></textarea>
+            <a href="https://github.com/subeyugi/ciphertoolgui/blob/main/readme.md" target="_blank">使い方はこちら</a><br><br>
+            <span class='top_half'>
+                <h8>入力文</h8>
+                <button id="copyButton" onclick='inputCopyBtnClicked()'>コピー</button>
+                <span class='top_id' id='top_input_id'></span>
+                <span class='top_error' id='top_input_message'></span>
+                <br>
+                <textarea id='input_text' class='top_text' spellcheck='false' resize='textareaResized()'></textarea>
+            </span>
+            <span class='top_half'>
+                <h8>出力文</h8>
+                <button id="copyButton" onclick='outputCopyBtnClicked()'>コピー</button>
+                <span class='top_id' id='top_output_id'></span>
+                <span class='top_error' id='top_output_message'></span><br>
+                <textarea id='output_text' class='top_text' spellcheck='false' readonly='readonly'></textarea>
+            </span>
         </div>
         <div id='main_area' class='main_area'></div>
 
         <link rel='stylesheet' href='style.css'>
+        <script src='src/variables.js'></script>
         <script src='lib/leader-line.min.js'></script>
         <script src="lib/encoding.min.js"></script>
         <script src="lib/anim-event.min.js"></script>
+        <script src="src/errorIndication.js"></script>
         <script src='src/converter.js'></script>
-        <script src='src/main.js'></script>
+        <script src='src/class.js'></script>
         <script src='src/main_script.js'></script>
         <script src="src/morseConverter.js"></script>
         <script src="src/stringConverter.js"></script>
@@ -33,8 +43,8 @@
         <script src="src/reverseConverter.js"></script>
         <script src="src/baseConverter.js"></script>
         <script src="src/charNumberConverter.js"></script>
-        <script src="src/errorIndication.js"></script>
         <script src="src/atbashConverter.js"></script>
         <script src="src/vigenereConverter.js"></script>
+        <script src="src/dakutenConverter.js"></script>
     </body>
 </html>

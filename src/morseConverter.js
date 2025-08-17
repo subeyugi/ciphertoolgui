@@ -97,109 +97,145 @@ morseDataEN.split('\n').forEach(e=>{
     morse2alphabetMap.set(morse, alphabet);
 });
 
-function encodeMorseJP(s){
-    if(Array.isArray(s)){
-        let result2 = [];
-        s.forEach(e => {
-            result2.push(encodeMorseJP(e));
-        });
-        return result2;
-    }
-    let result = "";
-    for(let i = 0; i < s.length; i++){
-        if(i != 0) result += "　";
-        let c = hiragana2morseMap.get(s[i]);
-        if(c != undefined){
-            result += c;
-        }else{
-            result += getErrorStr(s[i]);
+function encodeMorseJP(s, isVec=false){
+    let result = '';
+    let message = '';
+    if(isVec){
+        for(let i = 0; i < s.length; ++i){
+            for(let j = 0; j < s[i].length; ++j){
+                for(let k = 0; k < s[i][j].length; ++k){
+                    let tmp = encodeMorseJP(s[i][j][k]);
+                    s[i][j][k] = tmp.result;
+                    message += tmp.message;
+                }   
+            }
         }
+        return new ConverterResult(s, message);
+    }else{
+        s = splitDakuten(s);
+        for(let i = 0; i < s.length; i++){
+            if(i != 0) result += '　';
+            let c = hiragana2morseMap.get(s[i]);
+            if(c != undefined){
+                result += c;
+            }else{
+                result += getErrorStr(s[i]);
+                if(message == '') message = `"${s[i]}"を変換できません`;
+            }
+        }
+        return new ConverterResult(result, message);
     }
-    return result;
 }
 
-function decodeMorseJP(s){
-    if(Array.isArray(s)){
-        let result2 = [];
-        s.forEach(e => {
-            result2.push(decodeMorseJP(e));
-        });
-        return result2;
-    }
-    let result = "";
-    let s2 = "";
-    for(let i = 0; i < s.length; ++i){
-        if(s[i] == '.'){
-            s2 += '・';
-        }else if(s[i] == '_' || s[i] == '-'){
-            s2 += '－';
-        }else if(s[i] == ' '){
-            s2 += '　'
-        }else{
-            s2 += s[i];
+function decodeMorseJP(s, isVec=false){
+    let result = '';
+    let s2 = '';
+    let message = '';
+    if(isVec){
+        for(let i = 0; i < s.length; ++i){
+            for(let j = 0; j < s[i].length; ++j){
+                for(let k = 0; k < s[i][j].length; ++k){
+                    let tmp = decodeMorseJP(s[i][j][k]);
+                    s[i][j][k] = tmp.result;
+                    message += tmp.message;
+                }   
+            }
         }
-    }
-    let v = s2.split("　");
-    for(let i = 0; i < v.length; i++){
-        let c = morse2hiraganaMap.get(v[i]);
-        if(c != undefined){
-            result += c;
-        }else{
-            result += getErrorStr(v[i]);
+        return new ConverterResult(s, message);
+    }else{
+        for(let i = 0; i < s.length; ++i){
+            if(s[i] == '.'){
+                s2 += '・';
+            }else if(s[i] == '_' || s[i] == '-'){
+                s2 += '－';
+            }else if(s[i] == ' '){
+                s2 += '　'
+            }else{
+                s2 += s[i];
+            }
         }
+        let v = s2.split('　');
+        for(let i = 0; i < v.length; i++){
+            let c = morse2hiraganaMap.get(v[i]);
+            if(c != undefined){
+                result += c;
+            }else{
+                result += getErrorStr(v[i]);
+                if(message == '') message = `"${v[i]}"を変換できません`;
+            }
+        }
+        result = joinDakuten(result);
+        return new ConverterResult(result, message);
     }
-    return result;
 }
 
 
-function encodeMorseEN(s){
-    if(Array.isArray(s)){
-        let result2 = [];
-        s.forEach(e => {
-            result2.push(encodeMorseEN(e));
-        });
-        return result2;
-    }
-    let result = "";
-    for(let i = 0; i < s.length; i++){
-        if(i != 0) result += "　";
-        if(alphabet2morseMap.has(s[i])){
-            result += alphabet2morseMap.get(s[i]);
-        }else{
-            result += getErrorStr(s[i]);
+function encodeMorseEN(s, isVec=false){
+    let result = '';
+    let message = '';
+    if(isVec){
+        for(let i = 0; i < s.length; ++i){
+            for(let j = 0; j < s[i].length; ++j){
+                for(let k = 0; k < s[i][j].length; ++k){
+                    let tmp = encodeMorseEN(s[i][j][k]);
+                    s[i][j][k] = tmp.result;
+                    message += tmp.message;
+                }   
+            }
         }
+        return new ConverterResult(s, message);
+    }else{
+        for(let i = 0; i < s.length; i++){
+            if(i != 0) result += ' ';
+            let c = alphabet2morseMap.get(s[i]);
+            if(c != undefined){
+                result += c;
+            }else{
+                result += getErrorStr(s[i]);
+                if(message == '') message = `"${s[i]}"を変換できません`;
+            }
+        }
+        return new ConverterResult(result, message);
     }
-    return result;
 }
 
-function decodeMorseEN(s){
-    if(Array.isArray(s)){
-        let result2 = [];
-        s.forEach(e => {
-            result2.push(decodeMorseEN(e));
-        });
-        return result2;
-    }
-    let result = "";
-    let s2 = "";
-    for(let i = 0; i < s.length; ++i){
-        if(s[i] == '.' || s[i] == '･'){
-            s2 += '・';
-        }else if(s[i] == '_' || s[i] == '-'){
-            s2 += '－';
-        }else if(s[i] == ' '){
-            s2 += '　'
-        }else{
-            s2 += s[i];
+function decodeMorseEN(s, isVec=false){
+    let result = '';
+    let s2 = '';
+    let message = '';
+    if(isVec){
+        for(let i = 0; i < s.length; ++i){
+            for(let j = 0; j < s[i].length; ++j){
+                for(let k = 0; k < s[i][j].length; ++k){
+                    let tmp = decodeMorseEN(s[i][j][k]);
+                    s[i][j][k] = tmp.result;
+                    message += tmp.message;
+                }   
+            }
         }
-    }
-    let v = s2.split("　");
-    for(let i = 0; i < v.length; i++){
-        if(morse2alphabetMap.has(v[i])){
-            result += morse2alphabetMap.get(v[i]);
-        }else{
-            result += getErrorStr(v[i]);
+        return new ConverterResult(s, message);
+    }else{
+        for(let i = 0; i < s.length; ++i){
+            if(s[i] == '.' || s[i] == '･'){
+                s2 += '・';
+            }else if(s[i] == '_' || s[i] == '-'){
+                s2 += '－';
+            }else if(s[i] == ' '){
+                s2 += '　'
+            }else{
+                s2 += s[i];
+            }
         }
+        let v = s2.split('　');
+        for(let i = 0; i < v.length; i++){
+            let c = morse2alphabetMap.get(v[i]);
+            if(c != undefined){
+                result += c;
+            }else{
+                result += getErrorStr(v[i]);
+                if(message == '') message = `"${v[i]}"を変換できません`;
+            }
+        }
+        return new ConverterResult(result, message);
     }
-    return result;
 }
