@@ -1,6 +1,10 @@
 //encoding.js by polygonplanet
 //https://github.com/polygonplanet/encoding.js
 //charcode: SJIS, ASCII, EUCJP, UTF8, UTF16, UNICODE
+
+//文字列を指定文字コードで16進数に変換する
+//s: 文字列
+//charcode: 文字コード。SJIS, ASCII, EUCJP, UTF8, UTF16, UNICODEのいずれか
 function encodeStr(s, charcode, isVec=false){
     if(isVec){
         for(let i = 0; i < s.length; ++i){
@@ -26,6 +30,9 @@ function encodeStr(s, charcode, isVec=false){
     }
 }
 
+//16進数を指定文字コードで文字列に変換する
+//s: 文字列
+//charcode: 文字コード。SJIS, ASCII, EUCJP, UTF8, UTF16, UNICODEのいずれか
 function decodeStr(s, charcode, isVec=false){
     if(isVec){
         message = '';
@@ -41,19 +48,23 @@ function decodeStr(s, charcode, isVec=false){
         return new ConverterResult(s, message);
     }else{
         let message = '';
+        let s_rem = '';
         if(charcode == 'ASCII'){
             if(s.length % 2 != 0){
-                if(message == '') message = '入力桁数は2の倍数の必要があります';
+                if(message == '') message = '入力桁数は2の倍数である必要があります';
+                s_rem = s.substr(Math.floor(s.length / 2) * 2, s.length);
                 s = s.substr(0, Math.floor(s.length / 2) * 2);
             }
         }else if(charcode == 'UTF8'){
             if(s.length % 6 != 0){
-                if(message == '') message = '入力桁数は6の倍数の必要があります';
+                if(message == '') message = '入力桁数は6の倍数である必要があります';
+                s_rem = s.substr(Math.floor(s.length / 6) * 6, s.length);
                 s = s.substr(0, Math.floor(s.length / 6) * 6);
             }
         }else{
             if(s.length % 4 != 0){
-                if(message == '') message = '入力桁数は4の倍数の必要があります';
+                if(message == '') message = '入力桁数は4の倍数である必要があります';
+                s_rem = s.substr(Math.floor(s.length / 4) * 4, s.length);
                 s = s.substr(0, Math.floor(s.length / 4) * 4);
             }
         }
@@ -66,7 +77,10 @@ function decodeStr(s, charcode, isVec=false){
             to: 'UNICODE',
             from: charcode
         });
-        console.log("a", message)
-        return new ConverterResult(Encoding.codeToString(unicodeArray), message);
+        if(s_rem == ''){
+            return new ConverterResult(Encoding.codeToString(unicodeArray), message);
+        }else{
+            return new ConverterResult(Encoding.codeToString(unicodeArray) + getErrorStr(s_rem), message);
+        }
     }
 }

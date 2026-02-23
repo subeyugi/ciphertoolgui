@@ -1,6 +1,7 @@
+let sep1 = ',', sep2 = ' ', sep3 = '\n';
+
 function updateAllText(){
     //あらかじめトポロジカルソートしておく
-
     let seen = new Set([]);
     let cntFromIds = new Map();
     let que = [];
@@ -11,10 +12,8 @@ function updateAllText(){
     });
 
     idSet.forEach(function(id){
-        console.log("14", id, cntFromIds.get(id));
         if(cntFromIds.get(id) == 0){
             if(cipherObjects.get(id).type == CipherType.input){
-                console.log("ok");
                 seen.add(id);
                 que.push(id);
             }else{
@@ -27,7 +26,6 @@ function updateAllText(){
     //トポロジカルソート
     while(que.length - queIdx > 0){
         let nowId = que[queIdx++];
-        console.log("nowid", nowId);
         if(cipherObjects.get(nowId).type != CipherType.input){
             sortedIds.push(nowId);
         }
@@ -39,13 +37,12 @@ function updateAllText(){
             }
         });
     }
-    console.log("updateAllText: ", sortedIds);
     sortedIds.forEach(function(id){
         updateText(id);
     });
 
     if(outputId){
-        console.log("text = ", cipherObjects.get(outputId).text);
+        //console.log("text = ", cipherObjects.get(outputId).text);
         document.getElementById('output_text').value = cipherObjects.get(outputId).text;
         document.getElementById('top_output_message').innerText = cipherObjects.get(outputId).message;
     }
@@ -53,13 +50,18 @@ function updateAllText(){
 
 function splitText(s){
     let result;
-    result = s.split(splitChars[2]);
+    result = s.split(sep3);
     for(let i = 0; i < result.length; ++i){
-        result[i] = result[i].split(splitChars[1]);
+        result[i] = result[i].split(sep2);
     }
+
     for(let i = 0; i < result.length; ++i){
         for(let j = 0; j < result[i].length; ++j){
-            result[i][j] = result[i][j].split(splitChars[0]);
+            let tmp = result[i][j].split(sep1);
+            result[i][j] =[];
+            for(let k = 0; k < tmp.length; k++){
+                result[i][j].push(tmp[k]);
+            }
         }
     }
     return result;
@@ -68,11 +70,11 @@ function splitText(s){
 function joinText(vec){
     let result = '';
     for(let i = 0; i < vec.length; ++i){
-        if(i > 0) result += splitChars[2];
+        if(i > 0) result += sep3;
         for(let j = 0; j < vec[i].length; ++j){
-            if(j > 0) result += splitChars[1];
+            if(j > 0) result += sep2;
             for(let k = 0; k < vec[i][j].length; ++k){
-                if(k > 0) result += splitChars[0];
+                if(k > 0) result += sep1;
                 result += vec[i][j][k];
             }
         }
@@ -81,19 +83,20 @@ function joinText(vec){
 }
 
 function updateText(to_id){
-    console.log("updatetext", to_id);
     if(!idSet.has(to_id)) return;
     let toObj = cipherObjects.get(to_id);
     let options = toObj.options;
     let fromText = '';
     let tmp;
+    sep1 = cipherObjects.get(to_id).separator1;
+    sep2 = cipherObjects.get(to_id).separator2;
+    sep3 = cipherObjects.get(to_id).separator3;
     if(toObj.fromIds.size == 1){
         fromText = cipherObjects.get(toObj.fromIds.values().next().value).text;
         fromTextSplit = splitText(fromText);
     }else if(toObj.fromIds.size >= 2){
 
     }
-    console.log("updateText:", to_id, fromText);
 
     switch(toObj.type){
         case CipherType.charcode:
@@ -202,16 +205,12 @@ function updateText(to_id){
             }
             break;
         case CipherType.strconv:
-            if(options.from == ''){
-                toObj.text = fromText;
-            }else{
-                tmp = convertString(fromTextSplit, options.from.split(splitChars[0]), options.to.split(splitChars[0]), true);
-                toObj.text = joinText(tmp.result);
-                toObj.message = tmp.message;
-            }
+            tmp = convertString(fromTextSplit, options.from.split(splitChars[0]), options.to.split(splitChars[0]), true);
+            toObj.text = joinText(tmp.result);
+            toObj.message = tmp.message;
             break;
         case CipherType.atbash:
-            tmp = convertAtbash(fromTextSplit, true);
+            tmp = convertAtbash(fromTextSplit, options.from, options.to, true);
             toObj.text = joinText(tmp.result);
             toObj.message = tmp.message;
             break;
@@ -254,7 +253,7 @@ function updateText(to_id){
             break;
     }
 
-    console.log("outputtext ", outputId);
+    //console.log("outputtext ", outputId);
     document.getElementById('txt_' + to_id).innerText = toObj.text;
     document.getElementById('output_text').innerText = toObj.text;
     if(toObj.message == ''){

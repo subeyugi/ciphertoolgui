@@ -6,6 +6,7 @@ const ErrorIndication = {
 }
 let errorType = ErrorIndication.brackets;
 
+//エラー表示する文字列をかっこで囲む
 function getErrorStr(s){
     switch(errorType){
         case ErrorIndication.none:

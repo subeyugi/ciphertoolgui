@@ -1,5 +1,9 @@
 //シーザー暗号
 
+//アルファベットの文字列に対して、rot個文字を後ろにずらした文字に変換する
+//zの次の文字はaである
+//s: アルファベット小文字のみで構成された文字列
+//rot: 整数
 function decodeCaesar(s, rot, isVec=false){
     console.log(s);
     let result = '';
@@ -10,7 +14,7 @@ function decodeCaesar(s, rot, isVec=false){
                 for(let k = 0; k < s[i][j].length; ++k){
                     let tmp = decodeCaesar(s[i][j][k], rot);
                     s[i][j][k] = tmp.result;
-                    message += tmp.message;
+                    if(message == '') message += tmp.message;
                 }   
             }
         }

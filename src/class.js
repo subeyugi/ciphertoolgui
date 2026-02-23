@@ -46,7 +46,10 @@ class CipherObject{
 
         this.type = CipherObject.none;
         this.options = {};
-        this.fromHash = 0;
+        this.separator1 = ',';
+        this.separator2 = ' ';
+        this.separator3 = '\n';
+        this.isOptionShow = false;
         this.text = '';
         this.message = '';
     }
@@ -63,6 +66,7 @@ class CipherObject{
         this.posY = json.posY;
         this.type = json.type;
         this.options = json.options;
+        this.separator = json.separator;
         this.fromHash = 0;
         this.text = json.text;
         this.message = json.message;
@@ -86,7 +90,6 @@ class CipherObject{
                 <option value='${CipherType.strconv}' class='type_strconv'>文字置換</option>
                 <option value='${CipherType.atbash}' class='type_strconv'>アトバシュ</option>
                 <option value='${CipherType.vigenere}' class='type_strconv'>ビジュネル</option>
-                <option value='${CipherType.uesugi}' class='type_strconv'>上杉</option>
                 <option value='${CipherType.polybius}' class='type_strconv'>ポリュビオス</option>
                 <option value='${CipherType.reverse}' class='type_strswap'>逆順</option>
                 <option value='${CipherType.join}' class='type_strswap'>結合</option>
@@ -96,12 +99,14 @@ class CipherObject{
                 <option value='${CipherType.baseconv}' class='type_math'>進数変換</option>
                 <option value='${CipherType.calc}' class='type_math'>計算</option>
             </select>
-            <div class='type_change_btn_L' onclick='preTypeBtnPressed("${this.id}")'><</div>
-            <div class='type_change_btn_R' onclick='nxtTypeBtnPressed("${this.id}")'>></div>
+            <div class='type_change_btn_L' onclick='preTypeBtnClicked("${this.id}")'><</div>
+            <div class='type_change_btn_R' onclick='nxtTypeBtnClicked("${this.id}")'>></div>
             <span id='sp1_${this.id}' class='box_sp'></span>
             <div id='sp2_${this.id}' class='box_sp'></div>
+            <div id='sp_option_btn_${this.id}'></div>
+            <div id='sp_option_${this.id}'></div>
             <div id='txt_${this.id}' class='text_box' readonly='readonly'></div>
-            <div id='btn_${this.id}' class='plus_button' onclick='plusButtonPressed("${this.id}")'></div>
+            <div id='btn_${this.id}' class='plus_button' onclick='plusButtonClicked("${this.id}")'></div>
         </div>`;
         return result;
     }
@@ -115,6 +120,12 @@ class CipherObject{
         classList.remove('strconv');
         classList.remove('posconv');
         classList.remove('math');
+        //console.log("type:", this.type);
+        if(this.type != CipherType.none && this.type != CipherType.input){
+            document.getElementById(`sp_option_btn_${this.id}`).innerHTML = `<div class='show_option_btn' onclick='optionButtonClicked("${this.id}")'>option</div>`;
+        }else{
+            document.getElementById(`sp_option_btn_${this.id}`).innerHTML = ``;
+        }
 
         switch(this.type){
             case CipherType.charcode:
@@ -184,7 +195,11 @@ class CipherObject{
                 this.options = {'from': '', 'to': ''};
                 break;
             case CipherType.atbash:
-                html = ``;
+                html = `<input type='text' id='from_${this.id}' oninput='optionChanged("from", "${this.id}")'>\
+                    ↓\
+                    <input type='text' id='to_${this.id}' oninput='optionChanged("to", "${this.id}")'>`;
+                classList.add('strconv');
+                this.options = {'from': '', 'to': ''};
                 classList.add('strconv');
                 break;
             case CipherType.vigenere:
@@ -192,10 +207,6 @@ class CipherObject{
                     <div class='select_element element_${this.id}' data-value='decode' onClick='elementClicked("${this.id}")' style='display: block;'>デコード</div>
                     <div class='select_element element_${this.id}' data-value='encode' onClick='elementClicked("${this.id}")' style='display: none;'>エンコード</div>`;
                 this.options = {'mode': 'decode', 'key': ''};
-                classList.add('strconv');
-                break;
-            case CipherType.uesugi:
-                html = ``;
                 classList.add('strconv');
                 break;
             case CipherType.polybius:
@@ -258,7 +269,7 @@ class CipherObject{
 
 
 //3桁半角英数文字列をボックス固有のidとして使用
-let chars = "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ";
+let chars = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 function makeRandomId(){
     let N = 3;
     while(true){

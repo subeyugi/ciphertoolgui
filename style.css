@@ -38,7 +38,6 @@ input[type='file']{
     background-color: hsl(0, 30%, 35%);
 }
 
-
 .box.posconv{
     background-color: hsl(60, 30%, 15%);
 }
@@ -79,7 +78,7 @@ input[type='file']{
 .text_box{
     background-color: #101010;
     color: white;
-    width: calc(100% - px);
+    width: calc(100% - 3px);
     height: max-content;
     resize: none;
     margin-top: 10px;
@@ -327,4 +326,32 @@ a:link{
 
 a:visited{
     color: #ff7741;
+}
+
+.show_option_btn{
+    position: absolute;
+    left: 150px;
+    top: 43px;
+    width: 33px;
+    height: 15px;
+    font-size: x-small;
+    color: #000000;
+    background-color: #FFFFFF30;
+}
+
+.show_option_btn:hover{
+    background-color: #FF000030;
+}
+
+.sepInput{
+    margin-top: 10px;
+    padding: 0px;
+    width: 30px;
+    height: 25px;
+    resize: none;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+.textarea::-webkit-scrollbar{
+  display:none;
 }

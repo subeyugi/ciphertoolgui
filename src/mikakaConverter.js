@@ -50,6 +50,7 @@ function decodeMikaka(s, isVec=false){
                 result += tmp;
             }else{
                 result += getErrorStr(s[i]);
+                if(message == '') message = `"${s[i]}"は変換できません`;
             }
         }
         return new ConverterResult(result, message);

@@ -1,9 +1,11 @@
 //init
-inputId = plusButtonPressed(null);
+inputId = plusButtonClicked(null);
 cipherObjects.get(inputId).changeType(CipherType.input);
-outputId = plusButtonPressed(inputId);
+outputId = plusButtonClicked(inputId);
 document.getElementById('top_input_id').innerText = inputId;
 document.getElementById('top_output_id').innerText = outputId;
+let boxIntervalW = 250;
+let boxDragable = false;
 
 document.getElementById('input_text').addEventListener('input', function(){
     inputText = document.getElementById('input_text').value;
@@ -23,6 +25,7 @@ document.addEventListener('keyup', function(event) {
     }
 });
 
+
 const fileInput = document.getElementById("file_input");
 fileInput.addEventListener("change", () => {
     const [file] = fileInput.files;
@@ -36,7 +39,7 @@ fileInput.addEventListener("change", () => {
 });
 
 //プラスボタンを押したときに新規ボックスを作成
-function plusButtonPressed(fromId, toId){
+function plusButtonClicked(fromId, toId){
     if(toId == null){
         toId = makeRandomId();
     }
@@ -66,7 +69,20 @@ function plusButtonPressed(fromId, toId){
         }), false);
     }
 
-    //
+/*     document.getElementById('box_' + toId).onmousedown = function(event){
+        let y = event.clientY - parseInt(this.style.top);
+        let boxH = this.getBoundingClientRect().height;
+        let textH = document.getElementById('txt_' + toId).getBoundingClientRect().height;
+        let padding = 10;
+        if(boxH - textH - padding <= y){
+            boxDragable = true;
+        }
+    } */
+
+/*    document.getElementById('box_' + toId).onmouseup = function(event){
+        boxDragable = false;
+    } */
+
     document.getElementById('box_' + toId).onpointermove = function(event){
         let boxOffsetY = event.clientY - this.style.top.substring(0, this.style.top.length - 2);
         let boxHeight = this.clientHeight;
@@ -109,6 +125,9 @@ function plusButtonPressed(fromId, toId){
 }
 
 function boxClicked(id){
+    //boxをドラッグしてよいか判定
+    
+
     if(!idSet.has(id)) return;
     unselectAllBox();
     document.getElementById('box_' + id).classList.toggle('clicked');
@@ -136,17 +155,20 @@ function unselectAllBox(){
 function typeChanged(id){
     let type = parseInt(document.getElementById('sel_' + id).value);
     cipherObjects.get(id).changeType(type);
+    cipherObjects.get(id).isOptionShow = false;
+    document.getElementById('sp_option_' + id).innerHTML = ``;
+    
     updateAllText();
 }
 
-function preTypeBtnPressed(id){
+function preTypeBtnClicked(id){
     const select = document.getElementById('sel_' + id);
     let n = select.length;
     cipherObjects.get(id).changeType((select.selectedIndex - 1 + n) % n);
     updateAllText();
 }
 
-function nxtTypeBtnPressed(id){
+function nxtTypeBtnClicked(id){
     const select = document.getElementById('sel_' + id);
     let n = select.length;
     cipherObjects.get(id).changeType((select.selectedIndex + 1) % n);
@@ -220,7 +242,7 @@ function delBtnClicked(id){ //ボックスの削除
             outputId = "";
         }
     }
-    document.getElementById("box_" + id).remove();
+    document.getElementById('box_' + id).remove();
 
     //矢印の削除
     for(let i = 0; i < lines.length; i++){
@@ -238,7 +260,7 @@ function placeBoxFromJSON(json){
         lines[i][0].remove();
     }
     cipherObjects.clear();
-    document.getElementById("main_area").innerHTML = "";
+    document.getElementById('main_area').innerHTML = "";
     lines = [];
 
     //jsonに合うようにboxを配置
@@ -248,8 +270,24 @@ function placeBoxFromJSON(json){
         cipherObjects.set(e.id, obj);
         /* 
         cipherObjects.forEach((e) => {
-            plusButtonPressed(e.fromIds[0], e.id);
+            plusButtonClicked(e.fromIds[0], e.id);
         }); */
     });
+
+}
+
+//区切り文字の表示/非表示
+function optionButtonClicked(id){
+    if(!cipherObjects.get(id).isOptionShow){
+        document.getElementById('sp_option_' + id).innerHTML = `区切り文字<textarea class='sepInput'>${cipherObjects.get(id).separator1}</textarea><textarea class='sepInput'>${cipherObjects.get(id).separator2}</textarea><textarea class='sepInput'>${cipherObjects.get(id).separator3}</textarea>
+        結果全表示<input type='checkbox'></>`;
+        cipherObjects.get(id).isOptionShow = true;
+    }else{
+        document.getElementById('sp_option_' + id).innerHTML = ``;
+        cipherObjects.get(id).isOptionShow = false;
+    }
+}
+
+function showOption(id){
 
 }

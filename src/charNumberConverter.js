@@ -11,19 +11,21 @@ for(let i = 0; i < iroha.length; i++){
     iroha2numMp.set(iroha[i], i);
 }
 
-
 function num2alpha(vec, isVec=false){
     let result = '';
     let message = '';
     if(isVec){
-        for(let i = 0; i < vec.length; ++i){
-            for(let j = 0; j < vec[i].length; ++j){
+        let result = [[]];
+        for(let i = 0; i < vec.length; i++){
+            result[0].push([]);
+            for(let j = 0; j < vec[i].length; j++){
+                result[0][i].push([]);
                 let tmp = num2alpha(vec[i][j]);
-                vec[i][j] = tmp.result;
+                result[0][i][j] = tmp.result;
                 if(message == '') message = tmp.message;
             }
         }
-        return new ConverterResult(vec, message);
+        return new ConverterResult(result, message);
     }else{
         if(vec == '') return '';
         for(let i = 0; i < vec.length; i++){
@@ -43,14 +45,17 @@ function num2aiu(vec, isVec=false){
     let result = '';
     let message = '';
     if(isVec){
-        for(let i = 0; i < vec.length; ++i){
-            for(let j = 0; j < vec[i].length; ++j){
+        let result = [[]];
+        for(let i = 0; i < vec.length; i++){
+            result[0].push([]);
+            for(let j = 0; j < vec[i].length; j++){
+                result[0][i].push([]);
                 let tmp = num2aiu(vec[i][j]);
-                vec[i][j] = tmp.result;
+                result[0][i][j] = tmp.result;
                 if(message == '') message = tmp.message;
             }
         }
-        return new ConverterResult(vec, message);
+        return new ConverterResult(result, message);
     }else{
         for(let i = 0; i < vec.length; i++){
             if(0 <= vec[i] && vec[i] < aiu.length){
@@ -69,14 +74,17 @@ function num2iroha(vec, isVec=false){
     let result = '';
     let message = '';
     if(isVec){
-        for(let i = 0; i < vec.length; ++i){
-            for(let j = 0; j < vec[i].length; ++j){
+        let result = [[]];
+        for(let i = 0; i < vec.length; i++){
+            result[0].push([]);
+            for(let j = 0; j < vec[i].length; j++){
+                result[0][i].push([]);
                 let tmp = num2iroha(vec[i][j]);
-                vec[i][j] = tmp.result;
+                result[0][i][j] = tmp.result;
                 if(message == '') message = tmp.message;
             }
         }
-        return new ConverterResult(vec, message);
+        return new ConverterResult(result, message);
     }else{
         for(let i = 0; i < vec.length; i++){
             if(0 <= vec[i] && vec[i] < iroha.length){
@@ -91,18 +99,21 @@ function num2iroha(vec, isVec=false){
 }
 
 function alpha2num(vec, isVec = false){
-    let result = [];
     let message = '';
     if(isVec){
-        for(let i = 0; i < vec.length; ++i){
-            for(let j = 0; j < vec[i].length; ++j){
-                let tmp = num2iroha(vec[i][j][0]);
-                vec[i][j] = tmp.result;
+        let result = [];
+        for(let i = 0; i < vec[0].length; i++){
+            result.push([]);
+            for(let j = 0; j < vec[0][i].length; j++){
+                result[i].push([]);
+                let tmp = alpha2num(vec[0][i][j]);
+                result[i][j] = tmp.result;
                 if(message == '') message = tmp.result;
             }
         }
         return new ConverterResult(result, message);
     }else{
+        let result = [];
         for(let i = 0; i < vec.length; i++){
             if('a'.charCodeAt(0) <= vec.charCodeAt(i) && vec.charCodeAt(i) <= 'z'.charCodeAt(0)){
                 result.push((vec.charCodeAt(i) - 'a'.charCodeAt(0)).toString());
@@ -115,42 +126,60 @@ function alpha2num(vec, isVec = false){
     }
 }
 
-function aiu2num(vec){
-    if(Array.isArray(vec)){
-        let result2 = [];
-        vec.forEach(e => {
-            result2.push(aiu2num(e));
-        });
-        return result2;
-    }
-    let result = '';
-    for(let i = 0; i < vec.length; i++){
-        if(i != 0) result += ',';
-        if(aiu2numMp.has(vec[i])){
-            result += aiu2numMp.get(vec[i]);
-        }else{
-            result += getErrorStr(vec[i]);
+function aiu2num(vec, isVec){
+    let message = '';
+    if(isVec){
+        let result = [];
+        for(let i = 0; i < vec[0].length; i++){
+            result.push([]);
+            for(let j = 0; j < vec[0][i].length; j++){
+                result[i].push([]);
+                let tmp = aiu2num(vec[0][i][j]);
+                result[i][j] = tmp.result;
+                if(message == '') message = tmp.result;
+            }
         }
+        return new ConverterResult(result, message);
+    }else{
+        let result = [];
+        for(let i = 0; i < vec.length; i++){
+            let tmp = aiu2numMp.get(vec[i]);
+            if(tmp != undefined){
+                result.push(tmp.toString());
+            }else{
+                result.push(getErrorStr(vec[i]));
+                if(message == '') message = `"${vec[i]}"は変換できません`;
+            }
+        }
+        return new ConverterResult(result, message);
     }
-    return result;
 }
 
-function iroha2num(vec){
-    if(Array.isArray(vec)){
-        let result2 = [];
-        vec.forEach(e => {
-            result2.push(iroha2num(e));
-        });
-        return result2;
-    }
-    let result = '';
-    for(let i = 0; i < vec.length; i++){
-        if(i != 0) result += ',';
-        if(iroha2numMp.has(vec[i])){
-            result += iroha2numMp.get(vec[i]);
-        }else{
-            result += getErrorStr(vec[i]);
+function iroha2num(vec, isVec){
+    let message = '';
+    if(isVec){
+        let result = [];
+        for(let i = 0; i < vec[0].length; i++){
+            result.push([]);
+            for(let j = 0; j < vec[0][i].length; j++){
+                result[i].push([]);
+                let tmp = iroha2num(vec[0][i][j]);
+                result[i][j] = tmp.result;
+                if(message == '') message = tmp.result;
+            }
         }
+        return new ConverterResult(result, message);
+    }else{
+        let result = [];
+        for(let i = 0; i < vec.length; i++){
+            let tmp = iroha2numMp.get(vec[i]);
+            if(tmp != undefined){
+                result.push(tmp.toString());
+            }else{
+                result.push(getErrorStr(vec[i]));
+                if(message == '') message = `"${vec[i]}"は変換できません`;
+            }
+        }
+        return new ConverterResult(result, message);
     }
-    return result;
 }

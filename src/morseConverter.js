@@ -106,7 +106,7 @@ function encodeMorseJP(s, isVec=false){
                 for(let k = 0; k < s[i][j].length; ++k){
                     let tmp = encodeMorseJP(s[i][j][k]);
                     s[i][j][k] = tmp.result;
-                    message += tmp.message;
+                    if(message == '') message = tmp.message;
                 }   
             }
         }
@@ -137,7 +137,7 @@ function decodeMorseJP(s, isVec=false){
                 for(let k = 0; k < s[i][j].length; ++k){
                     let tmp = decodeMorseJP(s[i][j][k]);
                     s[i][j][k] = tmp.result;
-                    message += tmp.message;
+                    if(message == '') message = tmp.message;
                 }   
             }
         }
@@ -179,7 +179,7 @@ function encodeMorseEN(s, isVec=false){
                 for(let k = 0; k < s[i][j].length; ++k){
                     let tmp = encodeMorseEN(s[i][j][k]);
                     s[i][j][k] = tmp.result;
-                    message += tmp.message;
+                    if(message == '') message = tmp.message;
                 }   
             }
         }
@@ -209,7 +209,7 @@ function decodeMorseEN(s, isVec=false){
                 for(let k = 0; k < s[i][j].length; ++k){
                     let tmp = decodeMorseEN(s[i][j][k]);
                     s[i][j][k] = tmp.result;
-                    message += tmp.message;
+                    if(message == '') message = tmp.message;
                 }   
             }
         }
